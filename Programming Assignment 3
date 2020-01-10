@@ -1,0 +1,45 @@
+import random
+from copy import deepcopy
+
+cuts = []
+
+def kargerMinCut(graph):
+    dcopy = deepcopy(graph)
+    while len(dcopy) > 2:  # while there are at least more than 2 points, we continue to contract
+        contract(dcopy)
+    keys = list(dcopy.keys())
+    firstKey = keys[0]
+    mincut = len(dcopy[firstKey])
+    cuts.append(mincut)
+
+
+def contract(graph):
+    v = random.choice(list(graph.keys())) #
+    w = random.choice(graph[v])
+    for node in graph[w]:
+        if node != v:
+            graph[v].append(node)
+        if w in graph[node]:
+            graph[node].remove(w)
+        if node != v:
+            graph[node].append(v)
+    del graph[w]
+
+
+g = {}
+f = open('kargerMinCut.txt')
+count = 1
+data = f.readlines()
+for line in data:
+    elements = list(map(str, line.split()))
+    elements.pop(0)
+    g[str(count)] = elements
+    count += 1
+
+gsize = len(g)
+n = gsize * (gsize - 1)//2  # guarantees us to obtian the cuts, although large
+
+for i in range(n):
+    kargerMinCut(g)
+
+print(min(cuts))  # this will give us the min cut
